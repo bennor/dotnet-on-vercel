@@ -1,25 +1,26 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+// Add services to the container.
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-app.MapOpenApi();
-
-app.MapGet("/", () => TypedResults.Json(new
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
 {
-  message = "Hi from .NET on Vercel",
-  datetime = DateTimeOffset.UtcNow,
-  dotnet = new
-  {
-    frameworkDescription = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
-    runtimeVersion = Environment.Version.ToString(),
-    osDescription = System.Runtime.InteropServices.RuntimeInformation.OSDescription,
-    osArchitecture = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture.ToString(),
-    processArchitecture = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString(),
-    processorCount = Environment.ProcessorCount
-  }
-}));
+    app.UseExceptionHandler("/Error");
+}
+
+// HTTPS redirection and HSTS are intentionally omitted: Vercel terminates TLS
+// at the edge and forwards plain HTTP to the container on $PORT.
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapStaticAssets();
+app.MapRazorPages()
+   .WithStaticAssets();
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
 

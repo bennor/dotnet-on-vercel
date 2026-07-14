@@ -1,0 +1,41 @@
+@page
+@model DiagnosticsModel
+@{
+    ViewData["Title"] = "Diagnostics";
+}
+
+<h1>Diagnostics</h1>
+<p class="text-muted">Non-sensitive .NET runtime information from the server handling this request.</p>
+
+<table class="table table-striped">
+    <tbody>
+        <tr>
+            <th scope="row">Framework</th>
+            <td>@Model.FrameworkDescription</td>
+        </tr>
+        <tr>
+            <th scope="row">Runtime version</th>
+            <td>@Model.RuntimeVersion</td>
+        </tr>
+        <tr>
+            <th scope="row">OS description</th>
+            <td>@Model.OsDescription</td>
+        </tr>
+        <tr>
+            <th scope="row">OS architecture</th>
+            <td>@Model.OsArchitecture</td>
+        </tr>
+        <tr>
+            <th scope="row">Process architecture</th>
+            <td>@Model.ProcessArchitecture</td>
+        </tr>
+        <tr>
+            <th scope="row">Processor count</th>
+            <td>@Model.ProcessorCount</td>
+        </tr>
+        <tr>
+            <th scope="row">Server time (UTC)</th>
+            <td>@Model.UtcNow.ToString("O")</td>
+        </tr>
+    </tbody>
+</table>
