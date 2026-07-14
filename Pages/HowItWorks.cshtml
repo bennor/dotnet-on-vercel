@@ -7,45 +7,19 @@
 <h1>@ViewData["Title"]</h1>
 
 <p class="lead">
-    This is a standard ASP.NET Core Razor Pages app running on Vercel as a container.
+    A stock <code>dotnet new webapp</code> Razor Pages app, running on Vercel as a container.
 </p>
 
 <p>
-    There's no special adapter or serverless shim involved &mdash; it's the stock
-    <code>dotnet new webapp</code> template. Deployment works because the repo ships a
-    <code>Dockerfile.vercel</code> at its root:
+    The only Vercel-specific piece is a <code>Dockerfile.vercel</code> at the repo root.
+    Vercel builds it on every commit and runs the image on Fluid compute, which autoscales
+    and scales to zero when idle. The container just needs to serve HTTP on the
+    <code>PORT</code> Vercel provides &mdash; <code>Program.cs</code> binds
+    <code>http://0.0.0.0:$PORT</code>, and TLS is handled at the edge.
 </p>
 
-<ul>
-    <li>
-        Vercel detects <code>Dockerfile.vercel</code> and routes all traffic to the resulting
-        image, which it builds, pushes, and deploys on every commit.
-    </li>
-    <li>
-        The image runs as an OCI container on <strong>Fluid compute</strong> &mdash; not a
-        traditional always-on server &mdash; so it autoscales and scales to zero when idle,
-        billing only for active CPU.
-    </li>
-    <li>
-        The only real contract is <strong>HTTP on a port</strong>: Vercel injects a
-        <code>PORT</code> environment variable, and <code>Program.cs</code> binds
-        <code>http://0.0.0.0:$PORT</code>. TLS is terminated at the edge, so the container
-        just speaks plain HTTP.
-    </li>
-    <li>
-        A multi-stage build compiles with the .NET SDK image, then ships on the minimal
-        <code>aspnet:10.0-noble-chiseled</code> runtime (no shell or package manager, runs
-        as a non-root user).
-    </li>
-</ul>
-
 <p>
-    Learn more in the Vercel docs:
-    <a href="https://vercel.com/kb/guide/does-vercel-support-docker-deployments" target="_blank" rel="noopener">
-        Does Vercel support Docker deployments?
-    </a>
-    and the announcement,
-    <a href="https://vercel.com/blog/dockerfile-on-vercel" target="_blank" rel="noopener">
-        Run any Dockerfile on Vercel
-    </a>.
+    See it all in the <a href="https://github.com/bennor/dotnet-on-vercel" target="_blank" rel="noopener">source on GitHub</a>,
+    or read the Vercel docs on
+    <a href="https://vercel.com/kb/guide/does-vercel-support-docker-deployments" target="_blank" rel="noopener">Docker deployments</a>.
 </p>
