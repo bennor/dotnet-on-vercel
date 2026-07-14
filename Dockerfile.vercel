@@ -1,0 +1,28 @@
+# syntax=docker/dockerfile:1
+
+# ---- Build stage ----
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Restore as a separate, cacheable layer keyed on the project file
+COPY dotnet-on-vercel.csproj ./
+RUN dotnet restore dotnet-on-vercel.csproj
+
+# Publish (framework-dependent; UseAppHost=false skips the native launcher we don't need)
+COPY . .
+RUN dotnet publish dotnet-on-vercel.csproj \
+      -c Release \
+      -o /app/publish \
+      /p:UseAppHost=false
+
+# ---- Runtime stage ----
+# Chiseled = minimal, no shell/package manager, runs as non-root (uid 1654).
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled AS runtime
+WORKDIR /app
+COPY --from=build /app/publish ./
+
+# Vercel injects PORT at runtime; Program.cs binds http://0.0.0.0:$PORT (defaults to 8080).
+ENV PORT=8080
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "dotnet-on-vercel.dll"]
